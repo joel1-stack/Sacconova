@@ -1,0 +1,24 @@
+{
+  "appName": "SaccoNova",
+  "version": "1.0.0",
+  "description": "Modern SACCO Management System",
+  "features": {
+    "accounts": true,
+    "loans": true,
+    "transactions": true,
+    "reports": true,
+    "notifications": true,
+    "mobilePayments": true
+  },
+  "limits": {
+    "maxLoanAmount": 5000000,
+    "minSavingsBalance": 1000,
+    "maxTransactionAmount": 1000000
+  },
+  "settings": {
+    "currency": "KES",
+    "dateFormat": "dd/MM/yyyy",
+    "timeFormat": "HH:mm",
+    "language": "en"
+  }
+}

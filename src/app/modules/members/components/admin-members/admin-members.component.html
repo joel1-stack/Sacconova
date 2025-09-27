@@ -1,0 +1,225 @@
+<app-header></app-header>
+
+<div class="admin-members-container">
+  <div class="admin-content">
+    
+    <!-- Header -->
+    <div class="page-header">
+      <h1>Member Applications Management</h1>
+      <p>Review and approve new member registrations</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <h3>{{ stats.total }}</h3>
+          <p>Total Applications</p>
+        </div>
+      </div>
+      
+      <div class="stat-card pending">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-info">
+          <h3>{{ stats.pending }}</h3>
+          <p>Pending Review</p>
+        </div>
+      </div>
+      
+      <div class="stat-card approved">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <h3>{{ stats.approved }}</h3>
+          <p>Approved</p>
+        </div>
+      </div>
+      
+      <div class="stat-card rejected">
+        <div class="stat-icon">❌</div>
+        <div class="stat-info">
+          <h3>{{ stats.rejected }}</h3>
+          <p>Rejected</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters and Actions -->
+    <div class="filters-section">
+      <div class="filters">
+        <div class="filter-group">
+          <label for="statusFilter">Status:</label>
+          <select id="statusFilter" [(ngModel)]="statusFilter" (change)="onStatusFilterChange()" class="form-control">
+            <option value="all">All Applications</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="search">Search:</label>
+          <input type="text" id="search" [(ngModel)]="searchTerm" (input)="onSearchChange()" 
+                 placeholder="Search by name, email, ID..." class="form-control">
+        </div>
+      </div>
+      
+      <div class="actions">
+        <button class="btn btn-secondary" (click)="exportApplications()">
+          📊 Export Data
+        </button>
+      </div>
+    </div>
+
+    <!-- Applications Table -->
+    <div class="applications-table" *ngIf="!isLoading">
+      <div class="table-header">
+        <span>Application Details</span>
+        <span>Contact Info</span>
+        <span>Financial Info</span>
+        <span>Status</span>
+        <span>Actions</span>
+      </div>
+      
+      <div class="table-row" *ngFor="let application of filteredApplications">
+        <div class="application-details">
+          <div class="member-name">{{ application.firstName }} {{ application.lastName }}</div>
+          <div class="member-id">ID: {{ application.memberId }}</div>
+          <div class="application-date">Applied: {{ application.applicationDate | date:'shortDate' }}</div>
+        </div>
+        
+        <div class="contact-info">
+          <div class="email">{{ application.email }}</div>
+          <div class="phone">{{ application.phoneNumber }}</div>
+          <div class="national-id">NID: {{ application.nationalId }}</div>
+        </div>
+        
+        <div class="financial-info">
+          <div class="deposit">Deposit: {{ application.initialDeposit | currency:'KES':'symbol':'1.0-0' }}</div>
+          <div class="income">Income: {{ application.monthlyIncome | currency:'KES':'symbol':'1.0-0' }}</div>
+          <div class="occupation">{{ application.occupation }}</div>
+        </div>
+        
+        <div class="status-column">
+          <span class="status-badge" [class]="getStatusClass(application.status)">
+            {{ application.status | titlecase }}
+          </span>
+          <div class="review-info" *ngIf="application.reviewDate">
+            <small>{{ application.reviewDate | date:'shortDate' }}</small>
+          </div>
+        </div>
+        
+        <div class="actions-column">
+          <button class="btn btn-primary btn-sm" (click)="viewApplication(application)">
+            👁️ View
+          </button>
+          <button class="btn btn-success btn-sm" *ngIf="application.status === 'pending'" 
+                  (click)="approveApplication(application)">
+            ✅ Approve
+          </button>
+          <button class="btn btn-danger btn-sm" *ngIf="application.status === 'pending'" 
+                  (click)="rejectApplication(application)">
+            ❌ Reject
+          </button>
+        </div>
+      </div>
+      
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="filteredApplications.length === 0">
+        <div class="empty-icon">📋</div>
+        <h3>No Applications Found</h3>
+        <p>No member applications match your current filters.</p>
+      </div>
+    </div>
+
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+  </div>
+</div>
+
+<!-- Application Detail Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()" *ngIf="selectedApplication">
+    <div class="modal-header">
+      <h2>Application Details</h2>
+      <button class="close-btn" (click)="closeModal()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="detail-section">
+        <h3>Personal Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="label">Full Name:</span>
+            <span class="value">{{ selectedApplication.firstName }} {{ selectedApplication.lastName }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">National ID:</span>
+            <span class="value">{{ selectedApplication.nationalId }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Email:</span>
+            <span class="value">{{ selectedApplication.email }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Phone:</span>
+            <span class="value">{{ selectedApplication.phoneNumber }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="detail-section">
+        <h3>Employment & Financial</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="label">Occupation:</span>
+            <span class="value">{{ selectedApplication.occupation }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Employer:</span>
+            <span class="value">{{ selectedApplication.employer }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Monthly Income:</span>
+            <span class="value">{{ selectedApplication.monthlyIncome | currency:'KES':'symbol':'1.0-0' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Initial Deposit:</span>
+            <span class="value">{{ selectedApplication.initialDeposit | currency:'KES':'symbol':'1.0-0' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="detail-section">
+        <h3>Application Status</h3>
+        <div class="status-info">
+          <span class="status-badge large" [class]="getStatusClass(selectedApplication.status)">
+            {{ selectedApplication.status | titlecase }}
+          </span>
+          <div class="status-details">
+            <p><strong>Application Date:</strong> {{ selectedApplication.applicationDate | date:'fullDate' }}</p>
+            <p *ngIf="selectedApplication.reviewDate">
+              <strong>Review Date:</strong> {{ selectedApplication.reviewDate | date:'fullDate' }}
+            </p>
+            <p *ngIf="selectedApplication.reviewedBy">
+              <strong>Reviewed By:</strong> {{ selectedApplication.reviewedBy }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer" *ngIf="selectedApplication.status === 'pending'">
+      <button class="btn btn-success" (click)="approveApplication(selectedApplication)">
+        ✅ Approve Application
+      </button>
+      <button class="btn btn-danger" (click)="rejectApplication(selectedApplication)">
+        ❌ Reject Application
+      </button>
+      <button class="btn btn-secondary" (click)="closeModal()">Close</button>
+    </div>
+    
+    <div class="modal-footer" *ngIf="selectedApplication.status !== 'pending'">
+      <button class="btn btn-secondary" (click)="closeModal()">Close</button>
+    </div>
+  </div>
+</div>

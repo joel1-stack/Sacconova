@@ -1,0 +1,244 @@
+.registration-container {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  padding: 2rem 1rem;
+}
+
+.registration-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.success-card {
+  background: var(--bg-white);
+  padding: 3rem;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(26, 58, 95, 0.1);
+  border: 2px solid var(--status-success);
+
+  .success-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    color: var(--status-success);
+    margin-bottom: 1rem;
+    font-size: 2rem;
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  .success-details {
+    background: var(--secondary-cream);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    text-align: left;
+
+    p {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        padding: 0.5rem 0;
+        color: var(--text-secondary);
+        position: relative;
+        padding-left: 1.5rem;
+
+        &:before {
+          content: '✓';
+          position: absolute;
+          left: 0;
+          color: var(--status-success);
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+.registration-form-container {
+  background: var(--bg-white);
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(26, 58, 95, 0.1);
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 3rem;
+
+  h1 {
+    color: var(--text-primary);
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+  }
+}
+
+.form-section {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(151, 151, 151, 0.2);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+
+  h3 {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+
+    &:before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: var(--primary-gold);
+      margin-right: 0.75rem;
+      border-radius: 2px;
+    }
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid var(--accent-warm-gray);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: var(--bg-white);
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent-royal);
+      box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.15);
+    }
+
+    &.error {
+      border-color: var(--status-error);
+      box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.15);
+    }
+  }
+
+  .form-text {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-top: 0.25rem;
+  }
+
+  .error-message {
+    color: var(--status-error);
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+  }
+}
+
+.checkbox-group {
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1.4;
+
+    input[type="checkbox"] {
+      margin-right: 0.75rem;
+      margin-top: 0.2rem;
+      transform: scale(1.2);
+      accent-color: var(--primary-navy);
+    }
+
+    a {
+      color: var(--accent-royal);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(151, 151, 151, 0.2);
+
+  .btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    min-width: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .registration-container {
+    padding: 1rem;
+  }
+
+  .registration-form-container {
+    padding: 1.5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: center;
+
+    .btn {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+
+  .form-header h1 {
+    font-size: 2rem;
+  }
+}

@@ -1,1 +1,233 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global Styles - Professional SACCO Color Palette */
+:root {
+  /* Primary Colors */
+  --primary-navy: #1a3a5f;
+  --primary-green: #2e7d32;
+  --primary-gold: #ffd700;
+  
+  /* Secondary Colors */
+  --secondary-teal: #008080;
+  --secondary-charcoal: #424242;
+  --secondary-cream: #f8f9fa;
+  
+  /* Accent Colors */
+  --accent-emerald: #00a86b;
+  --accent-royal: #4169e1;
+  --accent-warm-gray: #969696;
+  
+  /* Status Colors */
+  --status-success: #4caf50;
+  --status-warning: #ff9800;
+  --status-error: #f44336;
+  
+  /* Text Colors */
+  --text-primary: #1a3a5f;
+  --text-secondary: #424242;
+  --text-light: #969696;
+  --text-white: #ffffff;
+  
+  /* Background Colors */
+  --bg-primary: #f8f9fa;
+  --bg-white: #ffffff;
+  --bg-dark: #1a3a5f;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* Form Styles */
+.form-control {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--accent-warm-gray);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: var(--bg-white);
+  color: var(--text-primary);
+
+  &:focus {
+    outline: none;
+    border-color: var(--accent-royal);
+    box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.15);
+  }
+
+  &.error {
+    border-color: var(--status-error);
+    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.15);
+  }
+}
+
+/* Button Styles */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+
+  &.btn-primary {
+    background: linear-gradient(135deg, var(--primary-navy), var(--accent-royal));
+    color: var(--text-white);
+    box-shadow: 0 4px 15px rgba(26, 58, 95, 0.3);
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--accent-royal), var(--primary-navy));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(26, 58, 95, 0.4);
+    }
+  }
+
+  &.btn-success {
+    background: linear-gradient(135deg, var(--primary-green), var(--accent-emerald));
+    color: var(--text-white);
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--accent-emerald), var(--primary-green));
+      transform: translateY(-2px);
+    }
+  }
+
+  &.btn-danger {
+    background: var(--status-error);
+    color: var(--text-white);
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+
+    &:hover:not(:disabled) {
+      background: #d32f2f;
+      transform: translateY(-2px);
+    }
+  }
+
+  &.btn-secondary {
+    background: var(--bg-white);
+    color: var(--text-primary);
+    border: 2px solid var(--accent-warm-gray);
+
+    &:hover:not(:disabled) {
+      background: var(--secondary-charcoal);
+      color: var(--text-white);
+      border-color: var(--secondary-charcoal);
+    }
+  }
+
+  &.btn-warning {
+    background: var(--status-warning);
+    color: var(--text-white);
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+
+    &:hover:not(:disabled) {
+      background: #f57c00;
+      transform: translateY(-2px);
+    }
+  }
+
+  &.btn-gold {
+    background: linear-gradient(135deg, var(--primary-gold), #ffb300);
+    color: var(--text-primary);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    font-weight: 600;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #ffb300, var(--primary-gold));
+      transform: translateY(-2px);
+    }
+  }
+
+  &:disabled {
+    background: var(--accent-warm-gray);
+    color: var(--text-light);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* Card Styles */
+.card {
+  background: var(--bg-white);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(26, 58, 95, 0.08);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(151, 151, 151, 0.2);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 30px rgba(26, 58, 95, 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+/* Table Styles */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--primary-white);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(150, 48, 25, 0.1);
+
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--light-gray);
+  }
+
+  th {
+    background: var(--cream);
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  tr:hover {
+    background: var(--cream);
+  }
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.p-1 { padding: 0.5rem; }
+.p-2 { padding: 1rem; }
+.p-3 { padding: 1.5rem; }
+
+.error-message {
+  color: var(--status-error);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.success-message {
+  color: var(--status-success);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.warning-message {
+  color: var(--status-warning);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}

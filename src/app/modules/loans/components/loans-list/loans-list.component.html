@@ -1,0 +1,49 @@
+<app-header></app-header>
+
+<div class="loans-container">
+  <div class="loans-content">
+    <div class="loans-header">
+      <h1>My Loans</h1>
+      <button class="btn btn-primary" (click)="navigateToApplication()">Apply for Loan</button>
+    </div>
+    
+    <div class="loans-table" *ngIf="!isLoading && loans.length > 0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Loan Number</th>
+            <th>Principal Amount</th>
+            <th>Outstanding Balance</th>
+            <th>Monthly Payment</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let loan of loans">
+            <td>{{ loan.loanNumber }}</td>
+            <td>{{ loan.principalAmount | currency:'KES':'symbol':'1.0-0' }}</td>
+            <td>{{ loan.outstandingBalance | currency:'KES':'symbol':'1.0-0' }}</td>
+            <td>{{ loan.monthlyPayment | currency:'KES':'symbol':'1.0-0' }}</td>
+            <td>
+              <span class="status-badge" [class]="getStatusClass(loan.status)">
+                {{ getStatusLabel(loan.status) }}
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-primary btn-sm" (click)="viewLoanDetails(loan.id)">View Details</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoading && loans.length === 0">
+      <h3>No loans found</h3>
+      <p>You don't have any loans yet. Apply for your first loan to get started.</p>
+      <button class="btn btn-primary" (click)="navigateToApplication()">Apply for Loan</button>
+    </div>
+
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+  </div>
+</div>

@@ -1,0 +1,300 @@
+<div class="website-container">
+  <!-- Header -->
+  <header class="website-header">
+    <div class="header-content">
+      <div class="logo">
+        <h1>SaccoNova</h1>
+        <span>Your Financial Partner</span>
+      </div>
+      <nav class="nav-links">
+        <a (click)="scrollToSection('features')">Features</a>
+        <a (click)="scrollToSection('about')">About</a>
+        <a (click)="openContact()">Contact</a>
+        <button class="theme-toggle" (click)="toggleTheme()" title="Toggle theme">
+          {{ isDarkMode ? '☀️' : '🌙' }}
+        </button>
+        <select class="language-selector" [(ngModel)]="selectedLanguage" (change)="changeLanguage($event)">
+          <option value="en">English</option>
+          <option value="sw">Kiswahili</option>
+        </select>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h2>Modern SACCO Management</h2>
+        <p>Empowering your financial cooperative with cutting-edge technology. Manage savings, loans, and transactions seamlessly.</p>
+        <div class="features-list">
+          <div class="feature-item">
+            <span class="icon">💰</span>
+            <span>Savings Management</span>
+          </div>
+          <div class="feature-item">
+            <span class="icon">📊</span>
+            <span>Loan Processing</span>
+          </div>
+          <div class="feature-item">
+            <span class="icon">📱</span>
+            <span>Mobile Banking</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Login Card -->
+      <div class="login-card" [class.shake]="loginError">
+        <div class="login-header">
+          <h3>{{ translate('member_login') }}</h3>
+          <p>{{ translate('access_account') }}</p>
+          <div class="security-badges">
+            <span class="badge">🔒 SSL Secured</span>
+            <span class="badge">🛡️ Bank-Level Security</span>
+          </div>
+        </div>
+
+        <!-- Live Statistics -->
+        <div class="live-stats">
+          <div class="stat-item">
+            <span class="count">{{ memberCount }}</span>
+            <span class="label">Active Members</span>
+          </div>
+          <div class="stat-item">
+            <span class="count">{{ loanCount }}</span>
+            <span class="label">Loans Processed</span>
+          </div>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" (keydown.enter)="onSubmit()">
+          <div class="form-group">
+            <label for="email">{{ translate('email') }}</label>
+            <div class="input-wrapper">
+              <input
+                type="email"
+                id="email"
+                formControlName="email"
+                class="form-control"
+                placeholder="{{ translate('enter_email') }}"
+                [class.error]="email?.invalid && email?.touched"
+                [class.valid]="email?.valid && email?.touched"
+                (input)="validateEmailRealTime()"
+                autocomplete="email"
+              />
+              <span class="input-icon">📧</span>
+              <span class="validation-icon" *ngIf="email?.touched">
+                {{ email?.valid ? '✅' : '❌' }}
+              </span>
+            </div>
+            <div class="error-message" *ngIf="email?.invalid && email?.touched">
+              <span *ngIf="email?.errors?.['required']">{{ translate('email_required') }}</span>
+              <span *ngIf="email?.errors?.['email']">{{ translate('email_invalid') }}</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">{{ translate('password') }}</label>
+            <div class="input-wrapper password-wrapper">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                id="password"
+                formControlName="password"
+                class="form-control"
+                placeholder="{{ translate('enter_password') }}"
+                [class.error]="password?.invalid && password?.touched"
+                [class.valid]="password?.valid && password?.touched"
+                (input)="checkPasswordStrength()"
+                autocomplete="current-password"
+              />
+              <span class="input-icon">🔒</span>
+              <button type="button" class="password-toggle" (click)="togglePasswordVisibility()">
+                {{ showPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
+            
+            <!-- Password Strength Meter -->
+            <div class="password-strength" *ngIf="password?.value">
+              <div class="strength-bar">
+                <div class="strength-fill" [style.width.%]="passwordStrength.percentage" [class]="passwordStrength.level"></div>
+              </div>
+              <span class="strength-text" [class]="passwordStrength.level">{{ passwordStrength.text }}</span>
+            </div>
+            
+            <div class="error-message" *ngIf="password?.invalid && password?.touched">
+              <span *ngIf="password?.errors?.['required']">{{ translate('password_required') }}</span>
+              <span *ngIf="password?.errors?.['minlength']">{{ translate('password_minlength') }}</span>
+            </div>
+          </div>
+
+          <!-- Remember Me & Forgot Password -->
+          <div class="form-options">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe">
+              <span class="checkmark"></span>
+              {{ translate('remember_me') }}
+            </label>
+            <a href="#" class="forgot-password" (click)="openForgotPassword($event)">{{ translate('forgot_password') }}</a>
+          </div>
+
+          <!-- CAPTCHA (Mock) -->
+          <div class="captcha-section" *ngIf="showCaptcha">
+            <div class="captcha-box">
+              <span>{{ captchaQuestion }}</span>
+              <input type="text" [(ngModel)]="captchaAnswer" name="captcha" placeholder="Answer" class="captcha-input">
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="login-btn"
+            [disabled]="loginForm.invalid || isLoading || (showCaptcha && !captchaValid)"
+          >
+            <span *ngIf="!isLoading">{{ translate('sign_in') }}</span>
+            <div class="loading-spinner" *ngIf="isLoading">
+              <div class="spinner"></div>
+              <span>{{ translate('signing_in') }}</span>
+            </div>
+          </button>
+
+          <!-- Social Login Options -->
+          <div class="social-login">
+            <div class="divider">
+              <span>{{ translate('or_continue_with') }}</span>
+            </div>
+            <div class="social-buttons">
+              <button type="button" class="social-btn google" (click)="loginWithGoogle()">
+                <span class="social-icon">🔍</span>
+                Google
+              </button>
+              <button type="button" class="social-btn demo" (click)="loginAsDemo()">
+                <span class="social-icon">👤</span>
+                {{ translate('demo_mode') }}
+              </button>
+            </div>
+          </div>
+          
+          <div class="demo-credentials">
+            <small>{{ translate('demo_credentials') }}: admin@sacconova.com / admin123</small>
+          </div>
+          
+          <div class="register-link">
+            <p>{{ translate('not_member') }} <a href="/register" class="register-btn">{{ translate('apply_membership') }}</a></p>
+          </div>
+
+          <!-- Biometric Login Option -->
+          <div class="biometric-login" *ngIf="biometricSupported">
+            <button type="button" class="biometric-btn" (click)="loginWithBiometric()">
+              <span class="biometric-icon">👆</span>
+              {{ translate('use_biometric') }}
+            </button>
+          </div>
+        </form>
+
+        <!-- 2FA Modal -->
+        <div class="tfa-modal" *ngIf="show2FA">
+          <div class="tfa-content">
+            <h4>{{ translate('two_factor_auth') }}</h4>
+            <p>{{ translate('enter_verification_code') }}</p>
+            <input type="text" [(ngModel)]="tfaCode" placeholder="000000" maxlength="6" class="tfa-input">
+            <div class="tfa-actions">
+              <button class="btn-verify" (click)="verify2FA()">{{ translate('verify') }}</button>
+              <button class="btn-cancel" (click)="cancel2FA()">{{ translate('cancel') }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="about-section">
+    <div class="section-content">
+      <h2>{{ translate('about_sacconova') }}</h2>
+      <div class="about-content">
+        <div class="about-text">
+          <p>{{ translate('about_description') }}</p>
+          
+          <!-- Client Testimonials -->
+          <div class="testimonials">
+            <h3>{{ translate('member_testimonials') }}</h3>
+            <div class="testimonial-carousel">
+              <div class="testimonial" *ngFor="let testimonial of testimonials; let i = index" [class.active]="i === currentTestimonial">
+                <p>"{{ testimonial.text }}"</p>
+                <div class="testimonial-author">
+                  <strong>{{ testimonial.author }}</strong>
+                  <span>{{ testimonial.role }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="contact-info">
+            <h3>{{ translate('get_in_touch') }}</h3>
+            <p><strong>{{ translate('phone') }}:</strong> <a href="tel:+254715641339">+254 715 641 339</a></p>
+            <p><strong>{{ translate('email') }}:</strong> <a href="mailto:info@sacconova.com">info@sacconova.com</a></p>
+            
+            <!-- Mobile App Links -->
+            <div class="app-downloads">
+              <h4>{{ translate('download_app') }}</h4>
+              <div class="app-badges">
+                <a href="#" class="app-badge">
+                  <img src="assets/images/app-store.png" alt="Download on App Store" onerror="this.style.display='none'">
+                  <span>📱 App Store</span>
+                </a>
+                <a href="#" class="app-badge">
+                  <img src="assets/images/google-play.png" alt="Get it on Google Play" onerror="this.style.display='none'">
+                  <span>🤖 Google Play</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="features-section">
+    <div class="section-content">
+      <h2>Why Choose SaccoNova?</h2>
+      <div class="features-grid">
+        <div class="feature-card" (click)="onSubmit()">
+          <div class="feature-icon">🏦</div>
+          <h3>Digital Banking</h3>
+          <p>Complete digital banking solution for modern SACCOs</p>
+          <div class="card-action">Click to Access →</div>
+        </div>
+        <div class="feature-card" (click)="onSubmit()">
+          <div class="feature-icon">🔒</div>
+          <h3>Secure & Safe</h3>
+          <p>Bank-level security with encrypted transactions</p>
+          <div class="card-action">Click to Access →</div>
+        </div>
+        <div class="feature-card" (click)="onSubmit()">
+          <div class="feature-icon">📈</div>
+          <h3>Real-time Reports</h3>
+          <p>Instant financial reports and analytics</p>
+          <div class="card-action">Click to Access →</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="website-footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>SaccoNova</h4>
+        <p>Transforming SACCO management with modern technology.</p>
+      </div>
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <p>Email: info@sacconova.com</p>
+        <p>Phone: <a href="tel:+254715641339" style="color: #3498db; text-decoration: none;">+254 715 641 339</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 SaccoNova. All rights reserved.</p>
+    </div>
+  </footer>
+</div>

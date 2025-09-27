@@ -1,0 +1,26 @@
+<app-header></app-header>
+
+<div class="accounts-container">
+  <div class="accounts-content">
+    <h1>My Accounts</h1>
+    
+    <div class="accounts-grid" *ngIf="!isLoading">
+      <div class="account-card" *ngFor="let account of accounts">
+        <div class="account-header">
+          <h3>{{ getAccountTypeLabel(account.accountType) }}</h3>
+          <span class="account-number">{{ account.accountNumber }}</span>
+        </div>
+        <div class="account-balance">
+          <span class="balance-label">Balance</span>
+          <span class="balance-amount">{{ account.balance | currency:'KES':'symbol':'1.2-2' }}</span>
+        </div>
+        <div class="account-actions">
+          <button class="btn btn-primary">View Details</button>
+          <button class="btn btn-success">Transfer</button>
+        </div>
+      </div>
+    </div>
+
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+  </div>
+</div>

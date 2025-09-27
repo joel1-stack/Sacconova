@@ -1,0 +1,213 @@
+<div class="registration-container">
+  <div class="registration-content">
+    
+    <!-- Success Message -->
+    <div class="success-card" *ngIf="isSubmitted">
+      <div class="success-icon">✅</div>
+      <h2>Application Submitted Successfully!</h2>
+      <p>Your membership application has been received and is under review.</p>
+      <div class="success-details">
+        <p><strong>What happens next?</strong></p>
+        <ul>
+          <li>Our admin team will review your application</li>
+          <li>You'll receive an email notification once approved</li>
+          <li>Initial deposit will be processed upon approval</li>
+          <li>You'll receive your member ID and login credentials</li>
+        </ul>
+      </div>
+      <button class="btn btn-primary" (click)="goToLogin()">Back to Login</button>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="registration-form-container" *ngIf="!isSubmitted">
+      <div class="form-header">
+        <h1>Join SaccoNova</h1>
+        <p>Become a member of our financial cooperative</p>
+      </div>
+
+      <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="registration-form">
+        
+        <!-- Personal Information -->
+        <div class="form-section">
+          <h3>Personal Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" formControlName="firstName" class="form-control"
+                     [class.error]="registrationForm.get('firstName')?.invalid && registrationForm.get('firstName')?.touched">
+              <div class="error-message" *ngIf="registrationForm.get('firstName')?.invalid && registrationForm.get('firstName')?.touched">
+                <span *ngIf="registrationForm.get('firstName')?.errors?.['required']">First name is required</span>
+                <span *ngIf="registrationForm.get('firstName')?.errors?.['minlength']">Minimum 2 characters required</span>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input type="text" id="lastName" formControlName="lastName" class="form-control"
+                     [class.error]="registrationForm.get('lastName')?.invalid && registrationForm.get('lastName')?.touched">
+              <div class="error-message" *ngIf="registrationForm.get('lastName')?.invalid && registrationForm.get('lastName')?.touched">
+                <span *ngIf="registrationForm.get('lastName')?.errors?.['required']">Last name is required</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nationalId">National ID Number *</label>
+              <input type="text" id="nationalId" formControlName="nationalId" class="form-control" maxlength="8"
+                     [class.error]="registrationForm.get('nationalId')?.invalid && registrationForm.get('nationalId')?.touched">
+              <div class="error-message" *ngIf="registrationForm.get('nationalId')?.invalid && registrationForm.get('nationalId')?.touched">
+                <span *ngIf="registrationForm.get('nationalId')?.errors?.['required']">National ID is required</span>
+                <span *ngIf="registrationForm.get('nationalId')?.errors?.['pattern']">Must be 8 digits</span>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="dateOfBirth">Date of Birth *</label>
+              <input type="date" id="dateOfBirth" formControlName="dateOfBirth" class="form-control"
+                     [class.error]="registrationForm.get('dateOfBirth')?.invalid && registrationForm.get('dateOfBirth')?.touched">
+            </div>
+            
+            <div class="form-group">
+              <label for="gender">Gender *</label>
+              <select id="gender" formControlName="gender" class="form-control">
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="form-section">
+          <h3>Contact Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phoneNumber">Phone Number *</label>
+              <input type="tel" id="phoneNumber" formControlName="phoneNumber" class="form-control"
+                     (input)="formatPhoneNumber($event)" placeholder="254712345678"
+                     [class.error]="registrationForm.get('phoneNumber')?.invalid && registrationForm.get('phoneNumber')?.touched">
+              <div class="error-message" *ngIf="registrationForm.get('phoneNumber')?.invalid && registrationForm.get('phoneNumber')?.touched">
+                <span *ngIf="registrationForm.get('phoneNumber')?.errors?.['required']">Phone number is required</span>
+                <span *ngIf="registrationForm.get('phoneNumber')?.errors?.['pattern']">Invalid phone format (254XXXXXXXXX)</span>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input type="email" id="email" formControlName="email" class="form-control"
+                     [class.error]="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched">
+              <div class="error-message" *ngIf="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched">
+                <span *ngIf="registrationForm.get('email')?.errors?.['required']">Email is required</span>
+                <span *ngIf="registrationForm.get('email')?.errors?.['email']">Invalid email format</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="address">Physical Address *</label>
+              <input type="text" id="address" formControlName="address" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label for="city">City/Town *</label>
+              <input type="text" id="city" formControlName="city" class="form-control">
+            </div>
+          </div>
+        </div>
+
+        <!-- Employment Information -->
+        <div class="form-section">
+          <h3>Employment Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="occupation">Occupation *</label>
+              <input type="text" id="occupation" formControlName="occupation" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label for="employer">Employer *</label>
+              <input type="text" id="employer" formControlName="employer" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label for="monthlyIncome">Monthly Income (KES) *</label>
+              <input type="number" id="monthlyIncome" formControlName="monthlyIncome" class="form-control" min="10000">
+            </div>
+          </div>
+        </div>
+
+        <!-- Next of Kin -->
+        <div class="form-section">
+          <h3>Next of Kin Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nextOfKinName">Full Name *</label>
+              <input type="text" id="nextOfKinName" formControlName="nextOfKinName" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label for="nextOfKinPhone">Phone Number *</label>
+              <input type="tel" id="nextOfKinPhone" formControlName="nextOfKinPhone" class="form-control"
+                     (input)="formatNextOfKinPhone($event)" placeholder="254712345678">
+            </div>
+            
+            <div class="form-group">
+              <label for="nextOfKinRelationship">Relationship *</label>
+              <select id="nextOfKinRelationship" formControlName="nextOfKinRelationship" class="form-control">
+                <option value="">Select Relationship</option>
+                <option value="spouse">Spouse</option>
+                <option value="parent">Parent</option>
+                <option value="child">Child</option>
+                <option value="sibling">Sibling</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Initial Deposit -->
+        <div class="form-section">
+          <h3>Initial Deposit</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="initialDeposit">Initial Deposit Amount (KES) *</label>
+              <input type="number" id="initialDeposit" formControlName="initialDeposit" class="form-control" min="1000">
+              <small class="form-text">Minimum deposit: KES 1,000</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms and Conditions -->
+        <div class="form-section">
+          <h3>Terms and Conditions</h3>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="agreeToTerms">
+              <span class="checkmark"></span>
+              I agree to the <a href="#" target="_blank">Terms and Conditions</a> *
+            </label>
+            
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="agreeToPrivacy">
+              <span class="checkmark"></span>
+              I agree to the <a href="#" target="_blank">Privacy Policy</a> and consent to data processing *
+            </label>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-actions">
+          <button type="submit" class="btn btn-gold" [disabled]="registrationForm.invalid || isLoading">
+            <span *ngIf="!isLoading">Submit Application</span>
+            <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="goToLogin()">Back to Login</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

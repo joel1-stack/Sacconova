@@ -1,0 +1,20 @@
+<header class="header">
+  <div class="header-content">
+    <div class="logo">
+      <h1>SaccoNova</h1>
+    </div>
+    
+    <nav class="nav-menu">
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/accounts" routerLinkActive="active">Accounts</a>
+      <a routerLink="/loans" routerLinkActive="active">Loans</a>
+      <a routerLink="/transactions" routerLinkActive="active">Transactions</a>
+      <a routerLink="/admin/members" routerLinkActive="active" *ngIf="isAdmin">Member Management</a>
+    </nav>
+
+    <div class="user-menu" *ngIf="currentUser">
+      <span class="user-name">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  sacco-frontend:
+    build: .
+    ports:
+      - "4200:80"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
+
+  sacco-backend:
+    image: node:18-alpine
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    restart: unless-stopped
+    # Add backend configuration when available

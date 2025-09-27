@@ -1,0 +1,227 @@
+<app-header></app-header>
+
+<div class="loan-application-container">
+  <div class="loan-application-content">
+    <div class="application-header">
+      <h1>Apply for Loan</h1>
+      <p>Complete the form below to apply for a loan</p>
+    </div>
+
+    <div class="application-layout">
+      <!-- Loan Application Form -->
+      <div class="application-form">
+        <form [formGroup]="loanForm" (ngSubmit)="onSubmit()">
+          
+          <!-- Loan Product Selection -->
+          <div class="form-section">
+            <h3>Loan Product</h3>
+            <div class="form-group">
+              <label for="productId">Select Loan Type</label>
+              <select id="productId" formControlName="productId" class="form-control">
+                <option value="">Choose loan product</option>
+                <option *ngFor="let product of loanProducts" [value]="product.id">
+                  {{ product.name }} ({{ product.interestRate }}% p.a.)
+                </option>
+              </select>
+            </div>
+
+            <div class="product-details" *ngIf="getSelectedProduct()">
+              <div class="detail-item">
+                <span>Interest Rate:</span>
+                <span>{{ getSelectedProduct()?.interestRate }}% per annum</span>
+              </div>
+              <div class="detail-item">
+                <span>Min Amount:</span>
+                <span>{{ getSelectedProduct()?.minAmount | currency:'KES':'symbol':'1.0-0' }}</span>
+              </div>
+              <div class="detail-item">
+                <span>Max Amount:</span>
+                <span>{{ getSelectedProduct()?.maxAmount | currency:'KES':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loan Details -->
+          <div class="form-section">
+            <h3>Loan Details</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="amount">Loan Amount (KES)</label>
+                <input
+                  type="number"
+                  id="amount"
+                  formControlName="amount"
+                  class="form-control"
+                  placeholder="Enter amount"
+                  min="10000"
+                />
+              </div>
+              <div class="form-group">
+                <label for="termMonths">Repayment Period (Months)</label>
+                <input
+                  type="number"
+                  id="termMonths"
+                  formControlName="termMonths"
+                  class="form-control"
+                  placeholder="6-60 months"
+                  min="6"
+                  max="60"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="purpose">Purpose of Loan</label>
+              <textarea
+                id="purpose"
+                formControlName="purpose"
+                class="form-control"
+                rows="3"
+                placeholder="Describe the purpose of this loan"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="nationalId">National ID Number *</label>
+              <input
+                type="text"
+                id="nationalId"
+                formControlName="nationalId"
+                class="form-control"
+                placeholder="Enter 8-digit National ID"
+                maxlength="8"
+                [class.error]="loanForm.get('nationalId')?.invalid && loanForm.get('nationalId')?.touched"
+              />
+              <div class="error-message" *ngIf="loanForm.get('nationalId')?.invalid && loanForm.get('nationalId')?.touched">
+                <span *ngIf="loanForm.get('nationalId')?.errors?.['required']">National ID is required</span>
+                <span *ngIf="loanForm.get('nationalId')?.errors?.['pattern']">National ID must be 8 digits</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="monthlyIncome">Monthly Income (KES)</label>
+              <input
+                type="number"
+                id="monthlyIncome"
+                formControlName="monthlyIncome"
+                class="form-control"
+                placeholder="Enter monthly income"
+                min="20000"
+              />
+            </div>
+          </div>
+
+          <!-- Guarantors -->
+          <div class="form-section">
+            <h3>Guarantors</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="guarantor1Name">Guarantor 1 Name *</label>
+                <input
+                  type="text"
+                  id="guarantor1Name"
+                  formControlName="guarantor1Name"
+                  class="form-control"
+                  placeholder="Full name"
+                />
+              </div>
+              <div class="form-group">
+                <label for="guarantor1Phone">Guarantor 1 Phone *</label>
+                <input
+                  type="tel"
+                  id="guarantor1Phone"
+                  formControlName="guarantor1Phone"
+                  class="form-control"
+                  placeholder="+254 700 000 000"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="guarantor2Name">Guarantor 2 Name (Optional)</label>
+                <input
+                  type="text"
+                  id="guarantor2Name"
+                  formControlName="guarantor2Name"
+                  class="form-control"
+                  placeholder="Full name"
+                />
+              </div>
+              <div class="form-group">
+                <label for="guarantor2Phone">Guarantor 2 Phone (Optional)</label>
+                <input
+                  type="tel"
+                  id="guarantor2Phone"
+                  formControlName="guarantor2Phone"
+                  class="form-control"
+                  placeholder="+254 700 000 000"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="router.navigate(['/loans'])">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="loanForm.invalid || isLoading"
+            >
+              <span *ngIf="!isLoading">Submit Application</span>
+              <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Loan Calculator & Schedule -->
+      <div class="loan-calculator">
+        <div class="calculator-card">
+          <h3>Loan Calculator</h3>
+          
+          <div class="calculation-result" *ngIf="calculatedPayment > 0">
+            <div class="monthly-payment">
+              <span class="label">Monthly Payment:</span>
+              <span class="amount">{{ calculatedPayment | currency:'KES':'symbol':'1.0-0' }}</span>
+            </div>
+            
+            <div class="loan-summary">
+              <div class="summary-item">
+                <span>Total Amount:</span>
+                <span>{{ (calculatedPayment * (loanForm.get('termMonths')?.value || 0)) | currency:'KES':'symbol':'1.0-0' }}</span>
+              </div>
+              <div class="summary-item">
+                <span>Total Interest:</span>
+                <span>{{ ((calculatedPayment * (loanForm.get('termMonths')?.value || 0)) - (loanForm.get('amount')?.value || 0)) | currency:'KES':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Schedule Preview -->
+          <div class="payment-schedule" *ngIf="paymentSchedule.length > 0">
+            <h4>Payment Schedule (First 6 months)</h4>
+            <div class="schedule-table">
+              <div class="schedule-header">
+                <span>Month</span>
+                <span>Payment</span>
+                <span>Balance</span>
+              </div>
+              <div class="schedule-row" *ngFor="let payment of paymentSchedule.slice(0, 6)">
+                <span>{{ payment.month }}</span>
+                <span>{{ payment.payment | currency:'KES':'symbol':'1.0-0' }}</span>
+                <span>{{ payment.balance | currency:'KES':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+            <p class="schedule-note" *ngIf="paymentSchedule.length > 6">
+              ... and {{ paymentSchedule.length - 6 }} more payments
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

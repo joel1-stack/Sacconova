@@ -1,0 +1,292 @@
+<app-header></app-header>
+
+<div class="dashboard-container">
+  <div class="dashboard-content">
+    <!-- Enhanced Header with Status -->
+    <div class="dashboard-header">
+      <div class="welcome-section">
+        <h1>Welcome Back, John Doe! 👋</h1>
+        <div class="header-info">
+          <span class="last-login">Last login: Today, 2:30 PM</span>
+          <div class="status-indicators">
+            <span class="status-item online">🟢 Online</span>
+            <button class="notification-bell" (click)="toggleNotifications()">
+              🔔 <span class="notification-badge" *ngIf="unreadNotifications > 0">{{ unreadNotifications }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="quick-actions-header">
+        <button class="btn btn-gold" (click)="refreshBalances()">🔄 Refresh</button>
+        <button class="btn btn-secondary" (click)="exportStatements()">📄 Export</button>
+        <button class="btn btn-privacy" (click)="toggleBalanceVisibility()">
+          {{ privacySettings.showBalances ? '👁️ Hide' : '👁️‍🗨️ Show' }} Balances
+        </button>
+      </div>
+    </div>
+    
+    <!-- Enhanced Financial Summary -->
+    <div class="financial-overview" *ngIf="!isLoading">
+      <!-- Summary Stats Cards -->
+      <div class="summary-stats">
+        <div class="stat-card total-savings">
+          <div class="stat-icon">💰</div>
+          <div class="stat-content">
+            <h3>{{ privacySettings.showBalances ? (150000 | currency:'KES':'symbol':'1.0-0') : '****' }}</h3>
+            <p>Total Savings</p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 75%"></div>
+            </div>
+            <small>75% of KES 200,000 goal</small>
+          </div>
+        </div>
+
+        <div class="stat-card total-shares">
+          <div class="stat-icon">📊</div>
+          <div class="stat-content">
+            <h3>{{ privacySettings.showBalances ? (50000 | currency:'KES':'symbol':'1.0-0') : '****' }}</h3>
+            <p>Share Value</p>
+            <div class="share-details">
+              <span>500 shares @ KES 100</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card active-loans">
+          <div class="stat-icon">🏦</div>
+          <div class="stat-content">
+            <h3>{{ privacySettings.showLoanDetails ? (75000 | currency:'KES':'symbol':'1.0-0') : '****' }}</h3>
+            <p>Active Loans</p>
+            <div class="loan-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 60%"></div>
+              </div>
+              <small>60% repaid</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card net-worth">
+          <div class="stat-icon">💳</div>
+          <div class="stat-content">
+            <h3>{{ privacySettings.showBalances ? (125000 | currency:'KES':'symbol':'1.0-0') : '****' }}</h3>
+            <p>Net Worth</p>
+            <div class="growth-indicator">
+              <span class="growth-percentage">+12.5% ↗️</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions-grid">
+        <button class="action-card transfer" (click)="quickTransfer()">
+          <div class="action-icon">🔄</div>
+          <span>Transfer Money</span>
+        </button>
+        <button class="action-card loan" (click)="applyLoan()">
+          <div class="action-icon">📋</div>
+          <span>Apply Loan</span>
+        </button>
+        <button class="action-card mpesa" (click)="mobileMoneyDeposit()">
+          <div class="action-icon">📱</div>
+          <span>M-Pesa Deposit</span>
+        </button>
+        <button class="action-card withdraw" (click)="mobileMoneyWithdraw()">
+          <div class="action-icon">💵</div>
+          <span>M-Pesa Withdraw</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Enhanced Dashboard Sections -->
+    <div class="dashboard-main" *ngIf="!isLoading">
+      <!-- Left Column -->
+      <div class="left-column">
+        <!-- Recent Transactions with Enhanced UI -->
+        <div class="transactions-section">
+          <div class="section-header">
+            <h2>📋 Recent Transactions</h2>
+            <div class="header-actions">
+              <input type="text" placeholder="Search transactions..." class="search-input" [(ngModel)]="transactionSearch">
+              <a routerLink="/transactions" class="view-all">View All</a>
+            </div>
+          </div>
+          <div class="transactions-table">
+            <div class="transaction-row" *ngFor="let transaction of recentTransactions">
+              <div class="transaction-icon" [class]="transaction.type">
+                {{ getTransactionIcon(transaction.type) }}
+              </div>
+              <div class="transaction-info">
+                <span class="description">{{ transaction.description }}</span>
+                <span class="date">{{ transaction.date | date:'MMM d, h:mm a' }}</span>
+                <span class="reference">Ref: {{ transaction.reference }}</span>
+              </div>
+              <div class="transaction-amount">
+                <span class="amount" [class]="transaction.type">{{ privacySettings.showTransactions ? (transaction.amount | currency:'KES':'symbol':'1.0-0') : '****' }}</span>
+                <span class="status" [class]="transaction.status">{{ transaction.status }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming Payments -->
+        <div class="upcoming-payments">
+          <div class="section-header">
+            <h2>⏰ Upcoming Payments</h2>
+          </div>
+          <div class="payments-list">
+            <div class="payment-item urgent">
+              <div class="payment-icon">💳</div>
+              <div class="payment-details">
+                <span class="payment-type">Loan Installment</span>
+                <span class="due-date">Due: Jan 15, 2025</span>
+              </div>
+              <span class="payment-amount">{{ privacySettings.showLoanDetails ? (8884 | currency:'KES':'symbol':'1.0-0') : '****' }}</span>
+            </div>
+            <div class="payment-item">
+              <div class="payment-icon">📊</div>
+              <div class="payment-details">
+                <span class="payment-type">Share Contribution</span>
+                <span class="due-date">Due: Jan 31, 2025</span>
+              </div>
+              <span class="payment-amount">{{ privacySettings.showBalances ? (5000 | currency:'KES':'symbol':'1.0-0') : '****' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="right-column">
+        <!-- Balance Breakdown Chart -->
+        <div class="balance-breakdown">
+          <div class="section-header">
+            <h2>📈 Balance Breakdown</h2>
+          </div>
+          <div class="chart-container">
+            <div class="pie-chart">
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <span class="color-dot savings"></span>
+                  <span>Savings (60%)</span>
+                </div>
+                <div class="legend-item">
+                  <span class="color-dot shares"></span>
+                  <span>Shares (20%)</span>
+                </div>
+                <div class="legend-item">
+                  <span class="color-dot loans"></span>
+                  <span>Loans (20%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini Growth Chart -->
+        <div class="growth-chart">
+          <div class="section-header">
+            <h2>📈 Savings Growth</h2>
+          </div>
+          <div class="chart-area">
+            <div class="growth-line">
+              <div class="growth-points">
+                <span class="point" style="left: 10%; bottom: 20%"></span>
+                <span class="point" style="left: 30%; bottom: 35%"></span>
+                <span class="point" style="left: 50%; bottom: 50%"></span>
+                <span class="point" style="left: 70%; bottom: 65%"></span>
+                <span class="point" style="left: 90%; bottom: 80%"></span>
+              </div>
+            </div>
+            <div class="chart-labels">
+              <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Status -->
+        <div class="account-status">
+          <div class="section-header">
+            <h2>📊 Account Status</h2>
+          </div>
+          <div class="status-items">
+            <div class="status-item">
+              <span class="status-label">Savings Account</span>
+              <span class="status-value active">Active ✓</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Loan Application</span>
+              <span class="status-value pending">Pending ⏳</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Share Purchase</span>
+              <span class="status-value approved">Approved ✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SACCO Overview Stats -->
+    <div class="sacco-stats" *ngIf="!isLoading">
+      <h2>SACCO Overview</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon members">👥</div>
+          <div class="stat-info">
+            <h3>{{ stats.totalMembers | number }}</h3>
+            <p>Total Members</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon savings">💰</div>
+          <div class="stat-info">
+            <h3>{{ stats.totalSavings | currency:'KES':'symbol':'1.0-0' }}</h3>
+            <p>Total Savings</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon loans">🏦</div>
+          <div class="stat-info">
+            <h3>{{ stats.totalLoans | currency:'KES':'symbol':'1.0-0' }}</h3>
+            <p>Total Loans</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon shares">📊</div>
+          <div class="stat-info">
+            <h3>{{ stats.totalShares | currency:'KES':'symbol':'1.0-0' }}</h3>
+            <p>Total Shares</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+
+    <div class="quick-actions" *ngIf="!isLoading">
+      <h2>Quick Actions</h2>
+      <div class="actions-grid">
+        <button class="action-btn" routerLink="/accounts">
+          <span class="action-icon">💰</span>
+          <span>View Accounts</span>
+        </button>
+        <button class="action-btn" routerLink="/loans/apply">
+          <span class="action-icon">📋</span>
+          <span>Apply for Loan</span>
+        </button>
+        <button class="action-btn" routerLink="/transactions">
+          <span class="action-icon">💳</span>
+          <span>View Transactions</span>
+        </button>
+        <button class="action-btn" routerLink="/loans">
+          <span class="action-icon">🏦</span>
+          <span>My Loans</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

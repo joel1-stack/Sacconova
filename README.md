@@ -1,59 +1,118 @@
-# SaccoNovaFrontend
+# SaccoNova Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.3.
+A modern SACCO (Savings and Credit Cooperative Organization) management system built with Angular 20.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- **Dashboard**: Overview of member accounts, loans, and transactions
+- **Account Management**: Savings and shares account tracking
+- **Loan Management**: Loan applications, approvals, and repayments
+- **Transaction History**: Complete transaction tracking and reporting
+- **User Authentication**: Secure login and session management
+- **Responsive Design**: Works on desktop and mobile devices
 
+## Technology Stack
+
+- Angular 20 with standalone components
+- TypeScript
+- SCSS for styling
+- RxJS for reactive programming
+- Docker for containerization
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18 or higher
+- npm or yarn
+- Angular CLI 20.3.3
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd sacco-nova-frontend
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+4. Open your browser and navigate to `http://localhost:4200/`
 
-## Code scaffolding
+### Default Login Credentials
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+For development/testing purposes:
+- Email: admin@sacconova.com
+- Password: admin123
 
-```bash
-ng generate component component-name
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── core/                 # Core services, models, guards
+│   ├── shared/               # Shared components, pipes, directives
+│   ├── modules/              # Feature modules
+│   │   ├── auth/            # Authentication
+│   │   ├── dashboard/       # Dashboard
+│   │   ├── accounts/        # Account management
+│   │   ├── loans/           # Loan management
+│   │   └── transactions/    # Transaction management
+│   └── styles/              # Global styles
+├── assets/                  # Static assets
+└── environments/            # Environment configurations
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Building for Production
 
 ```bash
-ng generate --help
+ng build --configuration production
 ```
 
-## Building
+## Docker Deployment
 
-To build the project run:
-
+1. Build the Docker image:
 ```bash
-ng build
+docker build -t sacco-nova-frontend .
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
+2. Run with Docker Compose:
 ```bash
-ng test
+docker-compose up -d
 ```
 
-## Running end-to-end tests
+## Development Guidelines
 
-For end-to-end (e2e) testing, run:
+- Use standalone components for new features
+- Follow Angular style guide
+- Write unit tests for components and services
+- Use TypeScript strict mode
+- Follow semantic versioning
 
-```bash
-ng e2e
-```
+## API Integration
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+The frontend expects a REST API backend with the following endpoints:
+- `/api/auth/*` - Authentication
+- `/api/accounts/*` - Account management
+- `/api/loans/*` - Loan management
+- `/api/transactions/*` - Transaction management
 
-## Additional Resources
+## Contributing
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Write tests
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.

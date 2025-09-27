@@ -1,0 +1,164 @@
+<app-header></app-header>
+
+<div class="loan-detail-container" *ngIf="!isLoading && loan">
+  <div class="loan-detail-content">
+    
+    <!-- Loan Header -->
+    <div class="loan-header">
+      <div class="loan-info">
+        <h1>Loan Details</h1>
+        <div class="loan-number">{{ loan.id }}</div>
+      </div>
+      <div class="loan-status">
+        <span class="status-badge" [class]="'status-' + loan.status">{{ loan.status | titlecase }}</span>
+      </div>
+    </div>
+
+    <!-- Loan Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="card-icon">💰</div>
+        <div class="card-content">
+          <h3>Principal Amount</h3>
+          <p>{{ loan.amount | currency:'KES':'symbol':'1.0-0' }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card">
+        <div class="card-icon">📊</div>
+        <div class="card-content">
+          <h3>Monthly Payment</h3>
+          <p>{{ loan.calculatedPayment | currency:'KES':'symbol':'1.0-0' }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card">
+        <div class="card-icon">⏰</div>
+        <div class="card-content">
+          <h3>Term</h3>
+          <p>{{ loan.termMonths }} Months</p>
+        </div>
+      </div>
+      
+      <div class="summary-card">
+        <div class="card-icon">💳</div>
+        <div class="card-content">
+          <h3>Outstanding Balance</h3>
+          <p>{{ loan.outstandingBalance | currency:'KES':'symbol':'1.0-0' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Next Payment Due -->
+    <div class="next-payment" *ngIf="getNextPayment()">
+      <div class="payment-card">
+        <h3>Next Payment Due</h3>
+        <div class="payment-info">
+          <div class="payment-amount">{{ getNextPayment().payment | currency:'KES':'symbol':'1.0-0' }}</div>
+          <div class="payment-date">Due: {{ getNextPayment().dueDate | date:'mediumDate' }}</div>
+        </div>
+        <button class="btn btn-primary" (click)="makePayment(getNextPayment())">
+          Make Payment
+        </button>
+      </div>
+    </div>
+
+    <!-- Payment Schedule & History -->
+    <div class="payment-section">
+      
+      <!-- Payment History -->
+      <div class="payment-history">
+        <h3>Payment History</h3>
+        <div class="history-table" *ngIf="paymentHistory.length > 0">
+          <div class="table-header">
+            <span>Date Paid</span>
+            <span>Amount</span>
+            <span>Principal</span>
+            <span>Interest</span>
+            <span>Reference</span>
+          </div>
+          <div class="table-row" *ngFor="let payment of paymentHistory">
+            <span>{{ payment.paidDate | date:'shortDate' }}</span>
+            <span>{{ payment.payment | currency:'KES':'symbol':'1.0-0' }}</span>
+            <span>{{ payment.principal | currency:'KES':'symbol':'1.0-0' }}</span>
+            <span>{{ payment.interest | currency:'KES':'symbol':'1.0-0' }}</span>
+            <span>{{ payment.transactionRef }}</span>
+          </div>
+        </div>
+        <div class="empty-history" *ngIf="paymentHistory.length === 0">
+          <p>No payments made yet</p>
+        </div>
+      </div>
+
+      <!-- Payment Schedule -->
+      <div class="payment-schedule">
+        <h3>Payment Schedule</h3>
+        <div class="schedule-table" *ngIf="loan.paymentSchedule">
+          <div class="table-header">
+            <span>Month</span>
+            <span>Due Date</span>
+            <span>Payment</span>
+            <span>Balance</span>
+            <span>Status</span>
+          </div>
+          <div class="table-row" *ngFor="let payment of loan.paymentSchedule" 
+               [class.paid]="isPaymentPaid(payment)">
+            <span>{{ payment.month }}</span>
+            <span>{{ payment.dueDate | date:'shortDate' }}</span>
+            <span>{{ payment.payment | currency:'KES':'symbol':'1.0-0' }}</span>
+            <span>{{ payment.balance | currency:'KES':'symbol':'1.0-0' }}</span>
+            <span>
+              <span class="status-indicator" 
+                    [class.paid]="isPaymentPaid(payment)"
+                    [class.pending]="!isPaymentPaid(payment)">
+                {{ getPaymentStatus(payment) }}
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loan Details -->
+    <div class="loan-details">
+      <h3>Loan Information</h3>
+      <div class="details-grid">
+        <div class="detail-item">
+          <span class="label">Application Date:</span>
+          <span class="value">{{ loan.applicationDate | date:'mediumDate' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Purpose:</span>
+          <span class="value">{{ loan.purpose }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">National ID:</span>
+          <span class="value">{{ loan.nationalId }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Monthly Income:</span>
+          <span class="value">{{ loan.monthlyIncome | currency:'KES':'symbol':'1.0-0' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Guarantor 1:</span>
+          <span class="value">{{ loan.guarantor1Name }} ({{ loan.guarantor1Phone }})</span>
+        </div>
+        <div class="detail-item" *ngIf="loan.guarantor2Name">
+          <span class="label">Guarantor 2:</span>
+          <span class="value">{{ loan.guarantor2Name }} ({{ loan.guarantor2Phone }})</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="loading-container" *ngIf="isLoading">
+  <app-loading-spinner></app-loading-spinner>
+</div>
+
+<div class="not-found" *ngIf="!isLoading && !loan">
+  <h2>Loan Not Found</h2>
+  <p>The requested loan could not be found.</p>
+  <button class="btn btn-primary" (click)="router.navigate(['/loans'])">Back to Loans</button>
+</div>
